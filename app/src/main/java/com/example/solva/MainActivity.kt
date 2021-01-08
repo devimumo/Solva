@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
     }
 
     fun navigation_onclick(view: View) {
