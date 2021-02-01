@@ -1,6 +1,7 @@
 package com.example.solva.SpareParts
 
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
@@ -19,11 +20,18 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.solva.Helper_classes.Volley_ErrorListener_Handler
 import com.example.solva.R
+import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.Adapters.Spare_search_tems_data_adapter
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_add__to_cart.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -52,13 +60,18 @@ private var search_mode="";
 
 
 
-class Spares_Search_Dashboard : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class Spares_Search_Dashboard : Activity(), AdapterView.OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_spares__search__dashboard)
 recycler_view= recycler_view
        rootView = window.decorView.rootView
+
+
+        check_number_of_items_in_cart(rootView!!.context)
+
+
 
 shop_now.setOnClickListener {
 
@@ -144,6 +157,57 @@ shop_now.setOnClickListener {
 
     }
 
+
+    fun check_number_of_items_in_cart(context: Context)
+    {
+        CoroutineScope(Dispatchers.IO).launch {
+            var get_items= Items_added_to_cart_db_instance()
+            var items=get_items.check_number_of_items_in_cart(context)
+
+
+            //     Log.d("weee",items.toString())
+            var siez_of_array=items.size
+
+            if (siez_of_array.equals(0)){
+                withContext(Dispatchers.Main) {
+
+
+                    //An icon only badge will be displayed unless a number is set:
+
+                    val badgeDrawable = rootView!!.bottom_navigation.getBadge(R.id.item_count_menu_item)
+                    if (badgeDrawable != null) {
+                        badgeDrawable.isVisible = false
+                        badgeDrawable.clearNumber()
+                    }
+
+
+                }
+            }
+            else
+            {
+
+                withContext(Dispatchers.Main) {
+
+                    val badge = bottom_navigation.getOrCreateBadge(R.id.item_count_menu_item)
+                    badge.isVisible = true
+
+                    badge.number=siez_of_array
+
+                }
+
+            }
+
+            /*  var dataa_to_json= Gson()
+              var data_to_json=dataa_to_json.toJson(items).toString()
+              Log.d("items_in_cart",data_to_json.toString()+"---"+we.toString())
+              withContext(Dispatchers.Main) {
+                  var instanse=Items_added_to_cart_db_instance()
+
+               //   instanse.set_to_recycler(context, messages_json)
+              }*/
+        }
+    }
+
     private fun get_items_searched_data_from_database(search_query: String, view: View, search_mode: String)
     {
         constraintLayout.visibility=View.GONE
@@ -156,7 +220,8 @@ shop_now.setOnClickListener {
 
         val requestQueue = Volley.newRequestQueue(this)
 
-        var get_items_searched_data_from_database_url="https://daudi.azurewebsites.net/solva/retreive_item_data.php?";
+        //var get_items_searched_data_from_database_url="https://daudi.azurewebsites.net/solva/retreive_item_data.php?";
+        var get_items_searched_data_from_database_url="https://project-daudi.000webhostapp.com/solva/retreive_item_data.php?";
 
         val stringRequest: StringRequest=object : StringRequest(Method.POST,
             get_items_searched_data_from_database_url,

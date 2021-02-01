@@ -1,5 +1,6 @@
 package com.example.solva.SpareParts.Adapters
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -65,7 +66,7 @@ class Spare_search_tems_data_adapter(
 
 holder.itemview.add_to_cart.setOnClickListener { view->
 
-    val activity = view.getContext() as AppCompatActivity
+    val activity = view.getContext() as Activity
 
     var intent=Intent(view.context, Add_To_cart::class.java)
 
