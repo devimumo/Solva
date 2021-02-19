@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:minHeight="100dp"
+    app:layout_constraintHeight_min="100dp"
+    app:layout_constraintHeight_max="150dp">
+
+
+    <ImageView
+        android:id="@+id/item_image_in_cart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#F1EAEA"
+        app:layout_constraintWidth_min="100dp"
+        app:layout_constraintWidth_max="100dp"
+        app:layout_constraintHeight_max="100dp"
+        app:layout_constraintHeight_min="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/repair2" />
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Car Bumper"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/item_image_in_cart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_min="25dp"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/item_image_in_cart"
+        app:layout_constraintTop_toTopOf="@+id/item_image_in_cart"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/item_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Fron Bumper"
+        app:layout_constraintBottom_toBottomOf="@+id/item_image_in_cart"
+        app:layout_constraintEnd_toEndOf="@+id/item_name"
+        app:layout_constraintHeight_min="25dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/item_name"
+        app:layout_constraintTop_toBottomOf="@+id/item_name"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/item_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12,000 kshs"
+        android:textColor="@color/black"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/item_image_in_cart"
+        app:layout_constraintEnd_toEndOf="@+id/item_name"
+        app:layout_constraintHeight_min="25dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/item_name"
+        app:layout_constraintTop_toBottomOf="@+id/item_name"
+        app:layout_constraintVertical_bias="0.858" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/add_to_cart_layout_add_or_remove_number_of_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_to_cart_button_back_for"
+        android:minHeight="26dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/item_image_in_cart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="60dp"
+        app:layout_constraintHorizontal_bias="0.761"
+        app:layout_constraintStart_toEndOf="@+id/item_amount"
+        app:layout_constraintTop_toTopOf="@+id/item_amount"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_max="110dp"
+        app:layout_constraintWidth_min="175dp">
+
+
+        <ImageView
+            android:id="@+id/reduce_no_of_items_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/minus_items_drawable"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="50dp"
+            app:layout_constraintHorizontal_bias="0.048"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintWidth_min="50dp" />
+
+        <TextView
+            android:id="@+id/items_in_cart_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#FF5722"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_min="20dp" />
+
+        <ImageView
+            android:id="@+id/add_items_to_cart_sign"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_baseline_add_box_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="50dp"
+            app:layout_constraintHorizontal_bias="0.944"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintWidth_min="50dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/remove_specific__item_from_cart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/remove_item_one"
+        app:layout_constraintBottom_toBottomOf="@+id/item_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintStart_toEndOf="@+id/item_name"
+        app:layout_constraintTop_toTopOf="@+id/item_image_in_cart"
+        app:layout_constraintVertical_bias="0.2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

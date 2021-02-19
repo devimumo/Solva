@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:maxWidth="200dp"
     android:minHeight="200dp">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#B5AEAE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardElevation="10dp"
-        android:elevation="7dp"
-
-
-        >
+        android:elevation="12dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minWidth="150dp"
-
             android:minHeight="200dp">
-
-
-
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -38,13 +45,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.106"
-                app:layout_constraintWidth_percent="0.4"
-                />
-
-
-
-
-
+                app:layout_constraintWidth_percent="0.4" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
@@ -53,27 +54,26 @@
                 android:layout_gravity="center"
                 android:isIndicator="true"
                 android:max="5"
-                 android:scaleY="0.7"
                 android:scaleX="0.7"
+                android:scaleY="0.7"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/imageView4"
                 app:layout_constraintStart_toStartOf="@+id/imageView4"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.42"/>
+                app:layout_constraintVertical_bias="0.42" />
 
             <TextView
                 android:id="@+id/item_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:maxHeight="60dp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:text="Toyota corolla side mirror.
         Right() Toyota corolla side mirror.
         Right()"
+                android:textColor="@color/black"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -98,20 +98,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/item_description"
                 app:layout_constraintVertical_bias="0.589" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/add_to_cart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="30dp"
+                android:background="@drawable/add_to_cart_in_spares_search_back"
+                android:minHeight="20dp"
                 android:text="Add to cart"
-                android:textSize="6dp"
-                app:layout_constraintWidth_max="75dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="8dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/item_amount"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.97"
-                app:layout_constraintStart_toEndOf="@+id/imageView4"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.97" />
+                app:layout_constraintStart_toEndOf="@+id/item_amount"
+                app:layout_constraintTop_toTopOf="@+id/item_amount"
+                app:layout_constraintWidth_max="75dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/vehicle_make_model"
@@ -129,8 +130,7 @@
                 app:layout_constraintStart_toStartOf="@+id/imageView4"
                 app:layout_constraintTop_toBottomOf="@+id/imageView4"
                 app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintWidth_max="300dp"
-                >
+                app:layout_constraintWidth_max="300dp">
 
                 <TextView
                     android:id="@+id/car_make"
@@ -166,4 +166,4 @@
 
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

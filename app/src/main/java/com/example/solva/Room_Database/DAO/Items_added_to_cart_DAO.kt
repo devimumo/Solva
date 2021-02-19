@@ -17,10 +17,16 @@ interface Items_added_to_cart_DAO {
     @Query("Delete FROM items_added_to_cart_table")
     fun  delete()
 
+    @Query("Delete FROM items_added_to_cart_table WHERE item_id LIKE :unique_id ")
+    fun  delete_specific_order_item(unique_id: String)
+
+
 
     @Query("SELECT * FROM items_added_to_cart_table WHERE item_id LIKE :unique_id" )
     fun getAll(unique_id: String): List<Items_added_to_cart_entity>
 
+    @Query("SELECT * FROM items_added_to_cart_table " )
+    fun getAll_items_in_cart(): List<Items_added_to_cart_entity>
 
 
 

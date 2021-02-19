@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Solva">
-        <activity android:name=".SpareParts.Add_to_cart.Add_To_cart"></activity>
+        <activity android:name=".SpareParts.View_Items_In_Cart.Items_in_cart"></activity>
+        <activity android:name=".SpareParts.Add_to_cart.Add_To_cart" />
         <activity android:name=".SpareParts.Spares_Search_Dashboard" />
         <activity android:name=".MainActivity">
             <intent-filter>

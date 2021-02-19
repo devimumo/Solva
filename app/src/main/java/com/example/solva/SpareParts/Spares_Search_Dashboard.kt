@@ -1,12 +1,13 @@
 package com.example.solva.SpareParts
 
-
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,8 @@ import com.example.solva.R
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.Adapters.Spare_search_tems_data_adapter
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
+import com.example.solva.SpareParts.View_Items_In_Cart.Items_in_cart
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_add__to_cart.*
@@ -69,8 +72,25 @@ recycler_view= recycler_view
        rootView = window.decorView.rootView
 
 
-        check_number_of_items_in_cart(rootView!!.context)
+        check_number_of_items_in_cart()
 
+
+bottom_navigation.setOnNavigationItemSelectedListener {
+    when(it.itemId){
+        R.id.item_count_menu_item->{
+
+            val intent=Intent(this,Items_in_cart::class.java)
+            startActivity(intent)
+
+        }
+
+        else -> {
+
+        }
+    }
+
+    true
+}
 
 
 shop_now.setOnClickListener {
@@ -157,20 +177,19 @@ shop_now.setOnClickListener {
 
     }
 
-
-    fun check_number_of_items_in_cart(context: Context)
+    fun check_number_of_items_in_cart()
     {
+
+        var context= rootView!!.context
         CoroutineScope(Dispatchers.IO).launch {
             var get_items= Items_added_to_cart_db_instance()
             var items=get_items.check_number_of_items_in_cart(context)
 
-
             //     Log.d("weee",items.toString())
-            var siez_of_array=items.size
+            var size_of_array=items.size
 
-            if (siez_of_array.equals(0)){
+            if (size_of_array.equals(0)){
                 withContext(Dispatchers.Main) {
-
 
                     //An icon only badge will be displayed unless a number is set:
 
@@ -179,22 +198,17 @@ shop_now.setOnClickListener {
                         badgeDrawable.isVisible = false
                         badgeDrawable.clearNumber()
                     }
-
-
                 }
             }
             else
             {
-
                 withContext(Dispatchers.Main) {
 
-                    val badge = bottom_navigation.getOrCreateBadge(R.id.item_count_menu_item)
+                    val badge = rootView!!.bottom_navigation.getOrCreateBadge(R.id.item_count_menu_item)
                     badge.isVisible = true
 
-                    badge.number=siez_of_array
-
+                    badge.number=size_of_array
                 }
-
             }
 
             /*  var dataa_to_json= Gson()
@@ -228,24 +242,16 @@ shop_now.setOnClickListener {
             Response.Listener { response ->
 
                 try {
-
-
-
                     search_parameters_category="empty_data"
                     search_parameter_value="empty_data"
 
                     Log.d("response_data", response)
 
-
-
                     var jsonObject = JSONObject(response)
-var status=jsonObject.getString("response")
-
-
+               var status=jsonObject.getString("response")
 
                     if (status.equals("data!"))
                     {
-
                         constraintLayout.visibility=View.VISIBLE
                         show_filters_pane_layout.visibility=View.GONE
 
@@ -255,8 +261,6 @@ var status=jsonObject.getString("response")
                     else {
                         var data1 = jsonObject.getJSONObject("items_data")
                         var data = data1.getJSONArray("items_data")
-
-
 
                         for (i in 0..data.length() - 1) {
 
@@ -277,16 +281,12 @@ var status=jsonObject.getString("response")
                                 data_value_at_i.getString("image_url"),
                                 data_value_at_i.getString("item_discount"),
                                 data_value_at_i.getString("rating")
-
-
                             )
 
                             var adap = Spare_search_tems_data_adapter(
                                 spares_arraylist,
                                 this
                             )
-
-
                             spares_arraylist.add(item_data_for_dataclass)
 
                             recycler_view?.layoutManager = GridLayoutManager(this, 2)
@@ -294,19 +294,17 @@ var status=jsonObject.getString("response")
 
                             spares_search_progress_bar.visibility = View.GONE
 
-
                             var mDividerItemDecoration = DividerItemDecoration(
                                 items_recycler_view.getContext(),
                                 DividerItemDecoration.HORIZONTAL
                             )
-
                             var mDividerItemDecoration_vertical = DividerItemDecoration(
                                 items_recycler_view.getContext(),
                                 DividerItemDecoration.VERTICAL
                             )
                             items_recycler_view.addItemDecoration(mDividerItemDecoration)
-                            items_recycler_view.addItemDecoration(mDividerItemDecoration_vertical)
-                            //  addItemDecoration(   DividerItemDecoration(                                this,                                DividerItemDecoration.VERTICAL
+                            //items_recycler_view.addItemDecoration(mDividerItemDecoration_vertical)
+                            //addItemDecoration(   DividerItemDecoration( this, DividerItemDecoration.VERTICAL)
 
 
                             recycler_view?.adapter = adap
@@ -315,17 +313,12 @@ var status=jsonObject.getString("response")
 
                         //   (recycler_view?.layoutManager as LinearLayoutManager).setStackFromEnd(true)
 
-
-
                     //   Log.d("response_data",response)
-
-
                 }
                 catch (e: JSONException) {
 
 
                     snack_bar("Search error.Try again",view)
-
 
                     search_parameters_category="empty_data"
                     search_parameter_value="empty_data"
@@ -519,6 +512,7 @@ var status=jsonObject.getString("response")
 
 
 }
+
 
 private fun DialogInterface.OnClickListener.onItemSelectedListener(
     sparesSearchDashboard: Spares_Search_Dashboard,

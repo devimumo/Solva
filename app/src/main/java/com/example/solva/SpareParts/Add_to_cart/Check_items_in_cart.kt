@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
+import com.example.solva.SpareParts.Spares_Search_Dashboard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,10 +22,15 @@ class Check_items_in_cart {
 
             var we=items.size
 
-
-
             if (we.equals(0)){
                 withContext(Dispatchers.Main) {
+                    var set_no_of_items_to_one_in_add_cart= Add_To_cart()
+
+                    var update_no_in_cart= Spares_Search_Dashboard()
+                    update_no_in_cart.check_number_of_items_in_cart()
+
+                    set_no_of_items_to_one_in_add_cart.set_number_of_items_text_to_one()
+                 //   set_no_of_items_to_one_in_add_cart.check_number_of_items_in_cart_for_add_to_cart_activity()
 
                     add_to_cart_function(context, data_from_dashboard)
                 }
@@ -69,9 +75,8 @@ class Check_items_in_cart {
         items_to_cart_entity.vehicle_model=dataFromDashboard!!.vehicle_model
         items_to_cart_entity.vendor_id=dataFromDashboard!!.vendor_id
 
-
-
         db_instance.insert_item_payload(context,items_to_cart_entity)
+
 
 
 
