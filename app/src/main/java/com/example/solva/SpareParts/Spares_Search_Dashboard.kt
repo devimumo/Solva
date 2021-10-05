@@ -177,6 +177,7 @@ shop_now.setOnClickListener {
 
     }
 
+
     fun check_number_of_items_in_cart()
     {
 
@@ -198,6 +199,12 @@ shop_now.setOnClickListener {
                         badgeDrawable.isVisible = false
                         badgeDrawable.clearNumber()
                     }
+                    else
+                    {
+                        badgeDrawable?.clearNumber()
+
+                    }
+
                 }
             }
             else

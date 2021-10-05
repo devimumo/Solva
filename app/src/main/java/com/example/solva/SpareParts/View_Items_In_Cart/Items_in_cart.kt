@@ -1,6 +1,8 @@
 package com.example.solva.SpareParts.View_Items_In_Cart
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,9 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.solva.R
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.Adapters.View_items_in_cart_from_local_roomdb_adapter
+import com.example.solva.SpareParts.Add_to_cart.Add_To_cart
 import com.example.solva.SpareParts.DataClasses.View_items_in_cart_data_class
+import com.example.solva.SpareParts.Spares_Search_Dashboard
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_spares__search__dashboard.*
 import kotlinx.android.synthetic.main.items_in_cart.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,14 +25,27 @@ import org.json.JSONArray
 import java.util.ArrayList
 
 class Items_in_cart : AppCompatActivity() {
+    private var update_no_in_cart_for_spares_search_dashboard= Spares_Search_Dashboard()
 
+    lateinit var adap:View_items_in_cart_from_local_roomdb_adapter;
+    private val delete_function=Items_added_to_cart_db_instance()
     private val items_in_cart_arraylist = ArrayList< View_items_in_cart_data_class >()
-private var grand_total_value=0
+    private var grand_total_value=0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_in_cart)
         
         retreive_data_from_room_database(this)
+
+
+        var message="Are you sure you want to clear cart. All items will be removed"
+
+        cancel_order_button.setOnClickListener {
+
+            remove_all_items_in_cart(this,message)
+        }
     }
 
 
@@ -47,6 +63,34 @@ private var grand_total_value=0
             }
         }
     }
+
+    private   fun remove_all_items_in_cart(context: Context, message: String) {
+
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage(message)
+                .setPositiveButton("Yes",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            // super.onBackPressed()
+                            delete_function.delete_all_order_items(context)
+items_in_cart_arraylist.clear()
+                            adap.notifyDataSetChanged()
+                            update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
+                            grand_total.text=""
+
+
+
+
+                        })
+                .setNegativeButton("No",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            // User cancelled the dialog
+
+                        })
+        // Create the AlertDialog object and return it
+        builder.create()
+        builder.show()
+    }
+
 
     fun set_grand_total_amount_from_adapter(grand_total_amount: String)
     {
@@ -83,7 +127,7 @@ var total_amount_for_item=quantity.toInt().toInt()*item_amount_value.toInt()
                 grand_total_value=grand_total_value+total_amount_for_item
 
 
-                var adap = View_items_in_cart_from_local_roomdb_adapter(items_in_cart_arraylist, context,grand_total_value.toString())
+                adap = View_items_in_cart_from_local_roomdb_adapter(items_in_cart_arraylist, context,grand_total_value.toString())
 
                 items_in_cart_arraylist.add(items_data_to_set_recycler)
                 items_in_cart_recycler_view?.layoutManager = LinearLayoutManager(context)

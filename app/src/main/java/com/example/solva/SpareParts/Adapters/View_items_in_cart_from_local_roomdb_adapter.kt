@@ -5,11 +5,12 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.solva.R
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
+import com.example.solva.SpareParts.Add_to_cart.Add_To_cart
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.example.solva.SpareParts.DataClasses.View_items_in_cart_data_class
 import com.example.solva.SpareParts.Spares_Search_Dashboard
@@ -27,6 +28,11 @@ import java.io.InputStream
 import java.net.URL
 import java.util.*
 
+
+
+private var update_no_in_cart_for_add_to_cart_activity= Add_To_cart()
+private var db_instance=Items_added_to_cart_db_instance()
+private var update_no_in_cart_for_spares_search_dashboard= Spares_Search_Dashboard()
 var quantity: String="0"
 
 class View_items_in_cart_from_local_roomdb_adapter(
@@ -62,8 +68,9 @@ class View_items_in_cart_from_local_roomdb_adapter(
           //  Toast.makeText(items_n_cart_activity.applicationContext,items_data.quantity+"---"+items_data.item_amount,Toast.LENGTH_LONG).show()
             grand_total_value=new_total
 
-            var update_no_in_cart=Spares_Search_Dashboard()
-            update_no_in_cart.check_number_of_items_in_cart()
+          //  update_no_in_cart_for_add_to_cart_activity.check_number_of_items_in_cart()
+          //  update_no_in_cart_for_add_to_cart_activity.set_add_to_cart_as_visible_after_item_removal_in_view_cart_activity()
+            update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
 
         }
 
@@ -76,8 +83,17 @@ class View_items_in_cart_from_local_roomdb_adapter(
 
 
             var updated_quantity=holder.itemview.items_in_cart_quantity.text.toString()
-            reduce_no_of_items_in_cart(c,updated_quantity,items_data.item_id,holder.itemView.items_in_cart_quantity)
-          //  quantity=(quantity.toInt()-1).toString()
+
+            if (updated_quantity.toInt()<=0)
+            {
+
+
+                holder.itemview.reduce_no_of_items_button.isClickable=false
+            }else {
+
+                reduce_no_of_items_in_cart(c, updated_quantity, items_data.item_id, holder.itemView.items_in_cart_quantity, holder.itemview.reduce_no_of_items_button)
+                //  quantity=(quantity.toInt()-1).toString()
+            }
 
         }
         holder.itemview.add_items_to_cart_sign.setOnClickListener {
@@ -88,7 +104,7 @@ class View_items_in_cart_from_local_roomdb_adapter(
 
 
             var updated_quantity=holder.itemview.items_in_cart_quantity.text.toString()
-            update_no_of_items_in_cart(c,updated_quantity,items_data.item_id,holder.itemView.items_in_cart_quantity)
+            update_no_of_items_in_cart(c,updated_quantity,items_data.item_id,holder.itemView.items_in_cart_quantity,holder.itemview.add_items_to_cart_sign)
           //  quantity=(quantity.toInt()+1).toString()
 
 
@@ -161,7 +177,7 @@ private fun LoadImageFromWebOperations_function(url: String?): Drawable? {
     }
 }
 
-private fun update_no_of_items_in_cart ( context: Context,no_of_items: String,item_id: String,no_of_items_textview: TextView)
+private fun update_no_of_items_in_cart (context: Context, no_of_items: String, item_id: String, no_of_items_textview: TextView, addItemsToCartSign: ImageView)
 {
 
         var update_items= Items_added_to_cart_db_instance()
@@ -172,11 +188,12 @@ private fun update_no_of_items_in_cart ( context: Context,no_of_items: String,it
         update_items.add_quantity_of_items_in_cart(context, item_id,quantity_to_set.toString())
     no_of_items_textview.text=quantity_to_set.toString()
 
+
 }
 
 
 private fun reduce_no_of_items_in_cart (
-    context: Context,no_of_items: String,item_id: String,no_of_items_textview: TextView)
+        context: Context, no_of_items: String, item_id: String, no_of_items_textview: TextView, reduceNoOfItemsButton: ImageView)
 {
 
     var update_items= Items_added_to_cart_db_instance()
@@ -186,6 +203,15 @@ private fun reduce_no_of_items_in_cart (
 
     update_items.add_quantity_of_items_in_cart(context, item_id,quantity_to_set.toString())
     no_of_items_textview.text=quantity_to_set.toString()
+    /*CoroutineScope(Dispatchers.IO).launch {
+        var get_items = Items_added_to_cart_db_instance()
+        var items = get_items.get_quanity_of_items_in_cart(context, item_id)
+        withContext(Dispatchers.Main)
+        {
+
+            update_no_in_cart_for_add_to_cart_activity.set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart(items)
+        }
+    }*/
 
 }
 

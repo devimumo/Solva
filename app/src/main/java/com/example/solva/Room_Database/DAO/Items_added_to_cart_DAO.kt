@@ -15,11 +15,13 @@ interface Items_added_to_cart_DAO {
     fun insertAll(vararg message_payload: Items_added_to_cart_entity)
 
     @Query("Delete FROM items_added_to_cart_table")
-    fun  delete()
+    fun  delete_all_cart_items()
 
     @Query("Delete FROM items_added_to_cart_table WHERE item_id LIKE :unique_id ")
     fun  delete_specific_order_item(unique_id: String)
 
+    @Query("SELECT quantity FROM items_added_to_cart_table WHERE item_id LIKE :unique_id" )
+    fun get_quanity_of_items_in_cart(unique_id: String): String
 
 
     @Query("SELECT * FROM items_added_to_cart_table WHERE item_id LIKE :unique_id" )

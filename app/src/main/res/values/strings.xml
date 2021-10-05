@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Solva</string>
+    <string name="title_activity_repair__car">Map</string>
+    <string name="title_main_acivity">Solva Dashboard</string>
+    <string name="title_activity_add_garage">Map</string>
 </resources>

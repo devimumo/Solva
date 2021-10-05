@@ -1,5 +1,7 @@
 package com.example.solva.SpareParts.Add_to_cart
 
+
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -7,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.example.solva.R
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
@@ -26,21 +29,25 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
 private var rootView: View? = null
-private var quantity=0
 private var  data_from_dashboard: Spare_parts_search_data_class? =null
 private var check_if_item_in_cart_instanse=Check_items_in_cart()
-private var add_to_cart_instanse=Add_To_cart()
+private var data_from_other_acitivity: String = ""
+private var no_of_items_in_specific_order_item: String="0"
 
+private var siez_of_array: Int=0
 class Add_To_cart : Activity() {
+    lateinit var text_to_change: TextView
+    private var quantity: String=0.toString()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add__to_cart)
 
         rootView = window.decorView.rootView
-
+text_to_change=findViewById<TextView>(R.id.items_in_cart_quantity)
         var intent=intent
         check_number_of_items_in_cart()
-
+data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
         change_to_item_data(intent.getStringExtra("item_data_to_json_string")!!)
 
         bottom_navigation_for_add_to_cart.setOnNavigationItemSelectedListener {
@@ -60,7 +67,6 @@ class Add_To_cart : Activity() {
             true
         }
 
-
         add_items_to_cart_sign.setOnClickListener {
 
             add_items_to_cart_sign_function()
@@ -71,13 +77,31 @@ class Add_To_cart : Activity() {
             reduce_no_of_items_function()
         }
 
-
         add_to_cart_layout.setOnClickListener {
 
           // add_to_cart_function(rootView,data_from_dashboard)
 
             check_if_item_in_cart_instanse.check_if_item_in_cart_when_adding_to_cart(rootView!!.context, data_from_dashboard!!.item_id, data_from_dashboard!!)
+
+
         }
+
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        check_number_of_items_in_cart()
+
+        set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        check_number_of_items_in_cart()
+        set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
+       // set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart(data_from_other_acitivity)
 
     }
 
@@ -87,10 +111,11 @@ class Add_To_cart : Activity() {
         var update_items= Items_added_to_cart_db_instance()
 
 
-        var quantity_to_set= items_in_cart_quantity.text.toString().toInt()-1
+quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
 
-        update_items.add_quantity_of_items_in_cart(this, data_from_dashboard!!.item_id,quantity_to_set.toString())
-        items_in_cart_quantity.text=quantity_to_set.toString()
+
+        update_items.add_quantity_of_items_in_cart(this, data_from_dashboard!!.item_id, quantity)
+        items_in_cart_quantity.text= quantity.toString()
 
     }
 
@@ -99,16 +124,18 @@ class Add_To_cart : Activity() {
         var update_items= Items_added_to_cart_db_instance()
 
 
-        var quantity_to_set= rootView!!.items_in_cart_quantity.text.toString().toInt()+1
+         quantity= (rootView!!.items_in_cart_quantity.text.toString().toInt()+1).toString()
 
-        update_items.add_quantity_of_items_in_cart(rootView!!.context, data_from_dashboard!!.item_id,quantity_to_set.toString())
-        rootView!!.items_in_cart_quantity.text=quantity_to_set.toString()
+        update_items.add_quantity_of_items_in_cart(rootView!!.context, data_from_dashboard!!.item_id,quantity)
+        rootView!!.items_in_cart_quantity.text=quantity
 
 
     }
 
 
-   private  fun check_number_of_items_in_cart()
+
+
+   fun check_number_of_items_in_cart()
     {
 
         var context= rootView!!.context
@@ -116,8 +143,10 @@ class Add_To_cart : Activity() {
             var get_items= Items_added_to_cart_db_instance()
             var items=get_items.check_number_of_items_in_cart(context)
 
-            //     Log.d("weee",items.toString())
             var size_of_array=items.size
+
+               Log.d("weee",items.toString())
+
 
             if (size_of_array.equals(0)){
                 withContext(Dispatchers.Main) {
@@ -166,12 +195,13 @@ class Add_To_cart : Activity() {
     {
 
         var context= rootView!!.context
+
         CoroutineScope(Dispatchers.IO).launch {
             var get_items= Items_added_to_cart_db_instance()
             var items=get_items.check_number_of_items_in_cart(context)
 
-            //     Log.d("weee",items.toString())
             var size_of_array=items.size
+            Log.d("weee1",items.toString())
 
             if (size_of_array.equals(0)){
                 withContext(Dispatchers.Main) {
@@ -189,8 +219,10 @@ class Add_To_cart : Activity() {
             {
                 withContext(Dispatchers.Main) {
 
-                    val badge = rootView!!.bottom_navigation_for_add_to_cart.getOrCreateBadge(R.id.item_count_menu_item)
+                   val badge = rootView!!.bottom_navigation_for_add_to_cart.getOrCreateBadge(R.id.item_count_menu_item)
                     badge.isVisible = true
+
+                    Log.d("size_of",size_of_array.toString())
 
                     badge.number=size_of_array
                 }
@@ -214,15 +246,12 @@ class Add_To_cart : Activity() {
 
         set_to_view(data_from_dashboard!!, rootView!!)
 
-        check_if_item_in_cart_when_opening_this_window(rootView!!.context, data_from_dashboard!!.item_id, data_from_dashboard!!)
+        check_if_item_in_cart_when_opening_this_window(rootView!!.context, data_from_dashboard!!.item_id)
 
         return  data_from_dashboard!!.item_id
     }
 
-
-
-
-    fun check_if_item_in_cart_when_opening_this_window(context: Context, unique_id: String,data_from_dashboard: Spare_parts_search_data_class)
+    fun check_if_item_in_cart_when_opening_this_window(context: Context, unique_id: String): Int
     {
         CoroutineScope(Dispatchers.IO).launch {
             var get_items= Items_added_to_cart_db_instance()
@@ -230,7 +259,7 @@ class Add_To_cart : Activity() {
 
 
        //     Log.d("weee",items.toString())
-           var siez_of_array=items.size
+            siez_of_array=items.size
 
             if (siez_of_array.equals(0)){
                 withContext(Dispatchers.Main) {
@@ -255,7 +284,8 @@ class Add_To_cart : Activity() {
 
                     var quantity_selected=message_at_position_jsonobect.getString("quantity")
 
-                    items_in_cart_quantity.text=quantity_selected.toString()
+                    quantity=quantity_selected.toString()
+                    items_in_cart_quantity.text= quantity
                     set_add_to_cart_as_invisible()
 
                 }
@@ -271,12 +301,64 @@ class Add_To_cart : Activity() {
                //   instanse.set_to_recycler(context, messages_json)
               }*/
         }
+        return siez_of_array
     }
 
    suspend fun  set_add_to_cart_as_visible() {
 
        rootView!!.add_to_cart_layout.visibility=View.VISIBLE
        rootView!!.add_to_cart_layout_add_or_remove_number_of_items.visibility=View.GONE
+    }
+
+     fun set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
+    {
+
+
+        data_from_dashboard=Gson().fromJson<Spare_parts_search_data_class>(data_from_other_acitivity,Spare_parts_search_data_class::class.java)
+
+        var check_if_there=check_if_item_in_cart_when_opening_this_window(rootView!!.context, data_from_dashboard!!.item_id)
+
+        if (check_if_there==0)
+        {
+
+            rootView!!.add_to_cart_layout.visibility=View.GONE
+            rootView!!.add_to_cart_layout_add_or_remove_number_of_items.visibility=View.VISIBLE
+
+        }else {
+
+            CoroutineScope(Dispatchers.IO).launch {
+                var get_items = Items_added_to_cart_db_instance()
+                no_of_items_in_specific_order_item = (get_items.get_quanity_of_items_in_cart(rootView!!.context, data_from_dashboard!!.item_id))
+
+//                Log.d("bby", no_of_items_in_specific_order_item)
+
+                withContext(Dispatchers.Main)
+                {
+
+                    //    quantity=items.toString()
+                    if (no_of_items_in_specific_order_item.toInt() <= 0) {
+                        rootView!!.add_to_cart_layout.visibility = View.VISIBLE
+                        rootView!!.add_to_cart_layout_add_or_remove_number_of_items.visibility = View.GONE
+                    }
+
+                    rootView!!.items_in_cart_quantity.text = no_of_items_in_specific_order_item.toString()
+                }
+            }
+        }
+
+
+     }
+
+    fun set_no_of_items_on_cart_count()
+    {
+        rootView!!.items_in_cart_quantity.text = ""
+
+    }
+
+    fun  set_add_to_cart_as_visible_after_item_removal_in_view_cart_activity() {
+
+        rootView!!.add_to_cart_layout.visibility=View.VISIBLE
+        rootView!!.add_to_cart_layout_add_or_remove_number_of_items.visibility=View.GONE
     }
 
     suspend fun  set_add_to_cart_as_invisible() {
@@ -322,15 +404,13 @@ class Add_To_cart : Activity() {
     fun set_number_of_items_text_to_one() {
 
         rootView!!.items_in_cart_quantity.text=1.toString()
-        check_number_of_items_in_cart_for_add_to_cart_activity()
+       // check_number_of_items_in_cart_for_add_to_cart_activity()
+
+
         var update_no_in_cart= Spares_Search_Dashboard()
-        update_no_in_cart.check_number_of_items_in_cart()
+      //  update_no_in_cart.check_number_of_items_in_cart()
 
-        update_no_in_cart.check_number_of_items_in_cart()
-        update_no_in_cart.check_number_of_items_in_cart()
+     //   update_no_in_cart.check_number_of_items_in_cart()
+      //  update_no_in_cart.check_number_of_items_in_cart()
     }
-}
- fun items_is_already_in_cart(context: Context)
-{
-
 }

@@ -8,7 +8,16 @@
 
     tools:context=".SpareParts.Add_to_cart.Add_To_cart">
 
-
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_for_add_to_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_bottom_navigation" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -351,12 +360,12 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.905"
+        app:layout_constraintVertical_bias="0.85"
         app:layout_constraintWidth_min="175dp">
 
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/reduce_no_of_items_button_image"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/minus_items_drawable"
@@ -387,7 +396,7 @@
             app:layout_constraintWidth_min="30dp" />
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/add_items_to_cart_sign"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/ic_baseline_add_box_24"
@@ -401,26 +410,5 @@
             app:layout_constraintWidth_min="50dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintHeight_min="55dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-
-        <ImageView
-            android:id="@+id/cart"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_min="60dp"
-            app:layout_constraintHeight_max="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/add_to_cart_vector" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

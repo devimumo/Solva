@@ -50,6 +50,21 @@ class Items_added_to_cart_db_instance {
 
     }
 
+    fun delete_all_order_items(context: Context)
+    {
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val db = Room.databaseBuilder(context,
+                Items_added_to_cart_DB::class.java, "solva"
+            ).build()
+
+            db.Items_added_to_cart_DAO().delete_all_cart_items()
+        }
+
+    }
+
 
     fun add_quantity_of_items_in_cart(context: Context, unique_id: String, quantity_to_set: String)
     {
@@ -85,7 +100,16 @@ class Items_added_to_cart_db_instance {
 
     }
 
+    fun get_quanity_of_items_in_cart(context: Context,unique_id: String): String
+    {
 
+        val db = Room.databaseBuilder( context, Items_added_to_cart_DB::class.java, "solva").build()
+
+        var data= db.Items_added_to_cart_DAO().get_quanity_of_items_in_cart(unique_id)
+
+
+        return data
+    }
 
     fun check_if_item_in_cart(context: Context,unique_id: String): List<Items_added_to_cart_entity>
     {
