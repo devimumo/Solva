@@ -92,7 +92,7 @@ class Check_items_in_cart {
         add_to_cart_instanse.set_number_of_items_text_to_one()
         add_to_cart_instanse.check_number_of_items_in_cart_for_add_to_cart_activity()
 
-        update_no_in_cart.check_number_of_items_in_cart()
+    //    update_no_in_cart.check_number_of_items_in_cart()
 
 
 

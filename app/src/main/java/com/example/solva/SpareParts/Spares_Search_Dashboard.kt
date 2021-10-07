@@ -7,10 +7,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,25 +20,24 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.solva.Helper_classes.Volley_ErrorListener_Handler
 import com.example.solva.R
-import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
+import com.example.solva.Room_Database.App_database.Items_added_to_cart_DB
 import com.example.solva.SpareParts.Adapters.Spare_search_tems_data_adapter
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.example.solva.SpareParts.View_Items_In_Cart.Items_in_cart
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.solva.View_model_items.Spares_Repository
+import com.example.solva.View_model_items.Spares_Viewmodel_Factory
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_add__to_cart.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
+
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.lifecycle.ViewModelProvider as ViewModelProvider1
 
 private var rootView: View? = null
 private val spares_arraylist = ArrayList<Spare_parts_search_data_class>()
@@ -50,7 +48,7 @@ private var model_year_arraylist: ArrayList<String>? =null
 private var vehicle_category: List<String>? =null
 private var spinner: Spinner ?= null
 private var search_parameter_value = "empty_data"
-
+private lateinit var viewModel: Spares_Search_View_Model
 
 private var search_parameters_vehicle_make: String="Toyota";
 private var search_parameters_vehicle_model="modelll";
@@ -64,15 +62,39 @@ private var search_mode="";
 
 
 class Spares_Search_Dashboard : Activity(), AdapterView.OnItemSelectedListener {
+
+//    val badgeDrawable = rootView!!.bottom_navigation.getBadge(R.id.item_count_menu_item)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_spares__search__dashboard)
-recycler_view= recycler_view
-       rootView = window.decorView.rootView
 
 
-        check_number_of_items_in_cart()
+//        val dao = Items_added_to_cart_DB.getInstance(application)?.Items_added_to_cart_DAO()
+//val repository=Spares_Repository(dao!!)
+//val factory=Spares_Viewmodel_Factory(repository)
+      //  viewModel = ViewModelProvider(this,factory).get(Spares_Search_View_Model::class.java)
+
+       // viewModel=ViewModelProvider(ViewModelStore(),factory!!).get(Spares_Search_View_Model::class.java)
+
+
+
+     //   var viewmodels: Spares_Search_View_Model= androidx.lifecycle.ViewModelProvider(this,factory).get
+
+
+
+
+
+
+
+        rootView = window.decorView.rootView
+
+        recycler_view= recycler_view
+
+
+        //check_number_of_items_in_cart()
 
 
 bottom_navigation.setOnNavigationItemSelectedListener {
@@ -178,13 +200,19 @@ shop_now.setOnClickListener {
     }
 
 
-    fun check_number_of_items_in_cart()
+ /*   fun check_number_of_items_in_cart()
     {
 
         var context= rootView!!.context
         CoroutineScope(Dispatchers.IO).launch {
             var get_items= Items_added_to_cart_db_instance()
             var items=get_items.check_number_of_items_in_cart(context)
+
+
+            viewModel.get_items_in_cart(rootView!!.context)?.observe(object : Activity(rootView.context),object : Observer <in List<Items_added_to_cart_entity>!> {
+
+            })
+
 
             //     Log.d("weee",items.toString())
             var size_of_array=items.size
@@ -194,7 +222,6 @@ shop_now.setOnClickListener {
 
                     //An icon only badge will be displayed unless a number is set:
 
-                    val badgeDrawable = rootView!!.bottom_navigation.getBadge(R.id.item_count_menu_item)
                     if (badgeDrawable != null) {
                         badgeDrawable.isVisible = false
                         badgeDrawable.clearNumber()
@@ -227,7 +254,7 @@ shop_now.setOnClickListener {
                //   instanse.set_to_recycler(context, messages_json)
               }*/
         }
-    }
+    }*/
 
     private fun get_items_searched_data_from_database(search_query: String, view: View, search_mode: String)
     {

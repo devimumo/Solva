@@ -7,14 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import com.example.solva.R
+import com.example.solva.Room_Database.App_database.Items_added_to_cart_DB
+import com.example.solva.Room_Database.DAO.Items_added_to_cart_DAO
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.Adapters.View_items_in_cart_from_local_roomdb_adapter
-import com.example.solva.SpareParts.Add_to_cart.Add_To_cart
 import com.example.solva.SpareParts.DataClasses.View_items_in_cart_data_class
 import com.example.solva.SpareParts.Spares_Search_Dashboard
+import com.example.solva.SpareParts.Spares_Search_View_Model
+import com.example.solva.View_model_items.Spares_Repository
+import com.example.solva.View_model_items.Spares_Viewmodel_Factory
+
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.items_in_cart.*
 import kotlinx.coroutines.CoroutineScope
@@ -33,11 +42,69 @@ class Items_in_cart : AppCompatActivity() {
     private var grand_total_value=0
 
 
+   private lateinit var viewmodel: Spares_Search_View_Model
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_in_cart)
-        
-        retreive_data_from_room_database(this)
+
+
+
+       // retreive_data_from_room_database(this)
+        //Instantiate the database
+        val db = Room.databaseBuilder( this, Items_added_to_cart_DB::class.java, "solva").build()
+        var ddg=db.Items_added_to_cart_DAO()
+
+        //   val dao = Items_added_to_cart_DB.getInstance(application)?.Items_added_to_cart_DAO()
+        val repository = ddg.let { Spares_Repository(it) }
+
+        val factory = repository.let { Spares_Viewmodel_Factory(it) }
+        viewmodel = factory.let { ViewModelProvider(this, it).get(Spares_Search_View_Model::class.java) }
+
+        viewmodel.cart_items.observe(this, Observer {
+
+
+            CoroutineScope(Dispatchers.IO).launch {
+                //  var get_data= Items_added_to_cart_db_instance()
+                //   var data_from_room_db=get_data.get_all_items_in_cart(context)
+
+                if (it.isEmpty())
+                {
+                    withContext(Dispatchers.Main) {
+                        //    set_to_recycler(this@Items_in_cart, data_json)
+                        Toast.makeText(applicationContext,"Is empty",Toast.LENGTH_LONG).show()
+
+
+                        getContentIfNotHandled(ddg,repository)
+                    }
+                }
+                else {
+
+                    //  var data_to_json = Gson()
+                    //   var data_json = data_to_json.toJson(it).toString()
+                    // Log.d("mesu",data_json.toString())
+                    Log.d("data_from_view_model", it.toString())
+
+                    var data_to_json = Gson()
+                    var data_json = data_to_json.toJson(it).toString()
+                    withContext(Dispatchers.Main) {
+                        set_to_recycler(this@Items_in_cart, data_json)
+
+
+                    }
+                }
+            }
+
+
+        })
+
+
+
+
+
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+      //  model.currentName.observe(this, nameObserver)
+      //  val factory = Spares_Viewmodel_Factory(Spares_Repository(dao))
 
 
         var message="Are you sure you want to clear cart. All items will be removed"
@@ -49,17 +116,31 @@ class Items_in_cart : AppCompatActivity() {
     }
 
 
+
+
+    fun getContentIfNotHandled(dao: Items_added_to_cart_DAO, repository: Spares_Repository)
+    {
+
+repository.cart_items_from_roomdb()
+
+    }
+
     fun retreive_data_from_room_database(context: Context)
     {
         CoroutineScope(Dispatchers.IO).launch {
-            var get_data= Items_added_to_cart_db_instance()
-            var data_from_room_db=get_data.get_all_items_in_cart(context)
+            var get_data = Items_added_to_cart_db_instance()
+            var data_from_room_db = get_data.get_all_items_in_cart(context)
 
-            var data_to_json= Gson()
-            var data_json=data_to_json.toJson(data_from_room_db).toString()
-            Log.d("mesu",data_json.toString())
-            withContext(Dispatchers.Main) {
- set_to_recycler(context,data_json)
+
+            if (data_from_room_db.isEmpty()) {
+
+            } else {
+                var data_to_json = Gson()
+                var data_json = data_to_json.toJson(data_from_room_db).toString()
+                Log.d("mesu", data_json.toString())
+                withContext(Dispatchers.Main) {
+                    set_to_recycler(context, data_json)
+                }
             }
         }
     }
@@ -74,7 +155,7 @@ class Items_in_cart : AppCompatActivity() {
                             delete_function.delete_all_order_items(context)
 items_in_cart_arraylist.clear()
                             adap.notifyDataSetChanged()
-                            update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
+                        //    update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
                             grand_total.text=""
 
 

@@ -33,8 +33,11 @@ private var  data_from_dashboard: Spare_parts_search_data_class? =null
 private var check_if_item_in_cart_instanse=Check_items_in_cart()
 private var data_from_other_acitivity: String = ""
 private var no_of_items_in_specific_order_item: String="0"
+private var update_no_in_cart_for_spares_search_dashboard= Spares_Search_Dashboard()
 
-private var siez_of_array: Int=0
+
+
+private var size_of_array: Int=0
 class Add_To_cart : Activity() {
     lateinit var text_to_change: TextView
     private var quantity: String=0.toString()
@@ -44,12 +47,14 @@ class Add_To_cart : Activity() {
         setContentView(R.layout.activity_add__to_cart)
 
         rootView = window.decorView.rootView
-text_to_change=findViewById<TextView>(R.id.items_in_cart_quantity)
+        text_to_change=findViewById<TextView>(R.id.items_in_cart_quantity)
         var intent=intent
-        check_number_of_items_in_cart()
-data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
+       // check_number_of_items_in_cart()
+        data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
         change_to_item_data(intent.getStringExtra("item_data_to_json_string")!!)
-
+        
+        
+        // click function for the cart button
         bottom_navigation_for_add_to_cart.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.item_count_menu_item->{
@@ -90,7 +95,7 @@ data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
 
     override fun onRestart() {
         super.onRestart()
-        check_number_of_items_in_cart()
+      //  check_number_of_items_in_cart()
 
         set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
 
@@ -99,7 +104,7 @@ data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
 
     override fun onResume() {
         super.onResume()
-        check_number_of_items_in_cart()
+     //   check_number_of_items_in_cart()
         set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
        // set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart(data_from_other_acitivity)
 
@@ -135,7 +140,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
 
 
 
-   fun check_number_of_items_in_cart()
+ /*  fun check_number_of_items_in_cart()
     {
 
         var context= rootView!!.context
@@ -180,7 +185,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
                //   instanse.set_to_recycler(context, messages_json)
               }*/
         }
-    }
+    }*/
 
 
     suspend  fun items_is_already_in_cart(context: Context) {
@@ -259,12 +264,16 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
 
 
        //     Log.d("weee",items.toString())
-            siez_of_array=items.size
+            size_of_array=items.size
 
-            if (siez_of_array.equals(0)){
+            if (size_of_array.equals(0)){
                 withContext(Dispatchers.Main) {
 
-                    set_add_to_cart_as_visible()
+
+                    items_in_cart_quantity.text= "1"
+                    set_add_to_cart_as_invisible()
+                    rootView!!.items_in_cart_quantity.text="1"
+                    check_if_item_in_cart_instanse.check_if_item_in_cart_when_adding_to_cart(rootView!!.context, data_from_dashboard!!.item_id, data_from_dashboard!!)
 
                 }
             }
@@ -301,7 +310,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
                //   instanse.set_to_recycler(context, messages_json)
               }*/
         }
-        return siez_of_array
+        return size_of_array
     }
 
    suspend fun  set_add_to_cart_as_visible() {
@@ -336,7 +345,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
                 {
 
                     //    quantity=items.toString()
-                    if (no_of_items_in_specific_order_item.toInt() <= 0) {
+                    if (no_of_items_in_specific_order_item.toInt() <= 0 || no_of_items_in_specific_order_item==null ) {
                         rootView!!.add_to_cart_layout.visibility = View.VISIBLE
                         rootView!!.add_to_cart_layout_add_or_remove_number_of_items.visibility = View.GONE
                     }

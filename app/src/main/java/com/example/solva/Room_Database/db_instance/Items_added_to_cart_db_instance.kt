@@ -1,6 +1,7 @@
 package com.example.solva.Room_Database.db_instance
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.example.solva.Room_Database.App_database.Items_added_to_cart_DB
 import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
@@ -84,7 +85,7 @@ class Items_added_to_cart_db_instance {
    {
 
        val db = Room.databaseBuilder( context, Items_added_to_cart_DB::class.java, "solva").build()
-       var data= db.Items_added_to_cart_DAO().getAll_values()
+       var data= db.Items_added_to_cart_DAO().getAll_items_in_cart()
 
        return data
 

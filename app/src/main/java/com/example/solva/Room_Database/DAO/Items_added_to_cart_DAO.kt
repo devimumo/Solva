@@ -1,15 +1,20 @@
 package com.example.solva.Room_Database.DAO
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface Items_added_to_cart_DAO {
 
     @Query("SELECT * FROM items_added_to_cart_table")
-    fun getAll_values(): List<Items_added_to_cart_entity>
+    fun getAll_values(): Flow<List<Items_added_to_cart_entity>>
+
+    @Query("SELECT * FROM items_added_to_cart_table")
+    fun getAll_values_2(): LiveData<List<Items_added_to_cart_entity>>
 
     @Insert
     fun insertAll(vararg message_payload: Items_added_to_cart_entity)

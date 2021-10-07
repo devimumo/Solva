@@ -70,11 +70,11 @@ holder.itemview.add_to_cart.setOnClickListener { view->
 
     var intent=Intent(view.context, Add_To_cart::class.java)
 
+
     var item_data_to_json_string= change_object_to_json_string(items_data)
     intent.putExtra("item_data_to_json_string",item_data_to_json_string)
     activity.startActivity(intent)
 }
-
 
     }
 

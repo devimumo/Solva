@@ -70,7 +70,7 @@ class View_items_in_cart_from_local_roomdb_adapter(
 
           //  update_no_in_cart_for_add_to_cart_activity.check_number_of_items_in_cart()
           //  update_no_in_cart_for_add_to_cart_activity.set_add_to_cart_as_visible_after_item_removal_in_view_cart_activity()
-            update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
+       //     update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
 
         }
 
