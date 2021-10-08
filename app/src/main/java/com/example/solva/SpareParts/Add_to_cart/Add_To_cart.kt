@@ -3,7 +3,9 @@ package com.example.solva.SpareParts.Add_to_cart
 
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +14,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.example.solva.R
+import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.example.solva.SpareParts.Spares_Search_Dashboard
@@ -22,18 +25,20 @@ import kotlinx.android.synthetic.main.activity_add__to_cart.*
 import kotlinx.android.synthetic.main.activity_add__to_cart.view.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.android.synthetic.main.items_in_cart.*
+import kotlinx.coroutines.*
 import org.json.JSONArray
 
 private var rootView: View? = null
 private var  data_from_dashboard: Spare_parts_search_data_class? =null
 private var check_if_item_in_cart_instanse=Check_items_in_cart()
 private var data_from_other_acitivity: String = ""
+private var quantity_other_acitivity: String = ""
+private var item_id: String = ""
+
 private var no_of_items_in_specific_order_item: String="0"
 private var update_no_in_cart_for_spares_search_dashboard= Spares_Search_Dashboard()
+var update_items= Items_added_to_cart_db_instance()
 
 
 
@@ -50,6 +55,7 @@ class Add_To_cart : Activity() {
         text_to_change=findViewById<TextView>(R.id.items_in_cart_quantity)
         var intent=intent
        // check_number_of_items_in_cart()
+        quantity_other_acitivity=intent.getStringExtra("quantity")!!
         data_from_other_acitivity=intent.getStringExtra("item_data_to_json_string")!!
         change_to_item_data(intent.getStringExtra("item_data_to_json_string")!!)
         
@@ -73,8 +79,10 @@ class Add_To_cart : Activity() {
         }
 
         add_items_to_cart_sign.setOnClickListener {
+CoroutineScope(Dispatchers.IO).launch {
+    add_items_to_cart_sign_function()
 
-            add_items_to_cart_sign_function()
+}
         }
 
 
@@ -93,11 +101,11 @@ class Add_To_cart : Activity() {
 
     }
 
-    override fun onRestart() {
+/*    override fun onRestart() {
         super.onRestart()
       //  check_number_of_items_in_cart()
 
-        set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
+      //  set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
 
 
     }
@@ -105,26 +113,80 @@ class Add_To_cart : Activity() {
     override fun onResume() {
         super.onResume()
      //   check_number_of_items_in_cart()
-        set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
+     //   set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart()
        // set_no_of_items_in_count_for_add_to_cart_from_view_items_in_cart(data_from_other_acitivity)
 
     }
+    */
+
 
     private fun reduce_no_of_items_function() {
 
 
-        var update_items= Items_added_to_cart_db_instance()
+
+if (items_in_cart_quantity.text.toString().toInt()==1)
+{
+remove_all_items_in_cart(this, item_id)
+
+}
+        else {
 
 
-quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
+    quantity = (items_in_cart_quantity.text.toString().toInt() - 1).toString()
 
+    CoroutineScope(Dispatchers.IO).launch {
 
-        update_items.add_quantity_of_items_in_cart(this, data_from_dashboard!!.item_id, quantity)
-        items_in_cart_quantity.text= quantity.toString()
+        var response = update_items.add_quantity_of_items_in_cart(
+            applicationContext, data_from_dashboard!!.item_id, quantity
+        )
+        withContext(Dispatchers.Main) {
+
+            if (response < 1) {
+
+            } else {
+
+                items_in_cart_quantity.text = quantity.toString()
+
+            }
+        }
+    }
+}
+
 
     }
 
-    private fun add_items_to_cart_sign_function() {
+
+    private   fun remove_all_items_in_cart(context: Context, unique_id: String) {
+
+        val builder = AlertDialog.Builder(context)
+        builder.setMessage("Are you sure you want to remove from cart")
+            .setPositiveButton("Yes",
+                DialogInterface.OnClickListener { dialog, id ->
+                    // super.onBackPressed()
+                    update_items.delete_specific_order_item(context,unique_id)
+
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(10000)
+                    }
+                    var intent= Intent(this,Spares_Search_Dashboard::class.java)
+                    startActivity(intent)
+
+
+
+
+                })
+            .setNegativeButton("No",
+                DialogInterface.OnClickListener { dialog, id ->
+                    // User cancelled the dialog
+
+                })
+        // Create the AlertDialog object and return it
+        builder.create()
+        builder.show()
+    }
+
+    private suspend fun add_items_to_cart_sign_function() {
 
         var update_items= Items_added_to_cart_db_instance()
 
@@ -251,7 +313,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
 
         set_to_view(data_from_dashboard!!, rootView!!)
 
-        check_if_item_in_cart_when_opening_this_window(rootView!!.context, data_from_dashboard!!.item_id)
+      //  check_if_item_in_cart_when_opening_this_window(rootView!!.context, data_from_dashboard!!.item_id)
 
         return  data_from_dashboard!!.item_id
     }
@@ -387,6 +449,8 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
         view.car_make_in_item_layout.text= items_data.vehicle_make
         view.discount_textview_in_item_layout.text="-"+items_data.item_discount+"%"
 
+item_id=items_data.item_id.toString()
+
         var perc=100-items_data.item_discount.toInt()
 
         view.ratingBar2.rating= items_data.rating.toFloat()
@@ -402,7 +466,7 @@ quantity= (items_in_cart_quantity.text.toString().toInt()-1).toString()
         val picasso = Picasso.get()
         picasso.load(image_url_value)
                 .into(view.imageView)
-
+        rootView!!.items_in_cart_quantity.text= quantity_other_acitivity
 
     }
 

@@ -5,19 +5,25 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
+import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface Items_added_to_cart_DAO {
 
     @Query("SELECT * FROM items_added_to_cart_table")
-    fun getAll_values(): Flow<List<Items_added_to_cart_entity>>
+    fun  getDistinctUserById (): Flow<List<Items_added_to_cart_entity>>
+
+    fun getAll_values ():
+            Flow<List<Items_added_to_cart_entity>> = getDistinctUserById()
+        .distinctUntilChanged()
 
     @Query("SELECT * FROM items_added_to_cart_table")
     fun getAll_values_2(): LiveData<List<Items_added_to_cart_entity>>
 
     @Insert
-    fun insertAll(vararg message_payload: Items_added_to_cart_entity)
+    fun insertAll( message_payload: Items_added_to_cart_entity): Long
 
     @Query("Delete FROM items_added_to_cart_table")
     fun  delete_all_cart_items()
@@ -38,7 +44,7 @@ interface Items_added_to_cart_DAO {
 
 
     @Query("Update items_added_to_cart_table   set quantity = :quantity WHERE item_id= :item_id" )
-    fun update_no_of_items_to_speicifc_cart_item(quantity: String, item_id: String)
+    fun update_no_of_items_to_speicifc_cart_item(quantity: String, item_id: String): Int
 
 
 }

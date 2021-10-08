@@ -3,6 +3,7 @@ package com.example.solva.SpareParts.View_Items_In_Cart
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -26,10 +27,7 @@ import com.example.solva.View_model_items.Spares_Viewmodel_Factory
 
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.items_in_cart.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONArray
 import java.util.ArrayList
 
@@ -48,10 +46,14 @@ class Items_in_cart : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.items_in_cart)
 
-
-
        // retreive_data_from_room_database(this)
         //Instantiate the database
+
+
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+      //  model.currentName.observe(this, nameObserver)
+      //  val factory = Spares_Viewmodel_Factory(Spares_Repository(dao))
+
         val db = Room.databaseBuilder( this, Items_added_to_cart_DB::class.java, "solva").build()
         var ddg=db.Items_added_to_cart_DAO()
 
@@ -75,7 +77,7 @@ class Items_in_cart : AppCompatActivity() {
                         Toast.makeText(applicationContext,"Is empty",Toast.LENGTH_LONG).show()
 
 
-                        getContentIfNotHandled(ddg,repository)
+                        //  getContentIfNotHandled(ddg,repository)
                     }
                 }
                 else {
@@ -88,7 +90,7 @@ class Items_in_cart : AppCompatActivity() {
                     var data_to_json = Gson()
                     var data_json = data_to_json.toJson(it).toString()
                     withContext(Dispatchers.Main) {
-                        set_to_recycler(this@Items_in_cart, data_json)
+                           set_to_recycler(this@Items_in_cart, data_json)
 
 
                     }
@@ -100,11 +102,6 @@ class Items_in_cart : AppCompatActivity() {
 
 
 
-
-
-        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-      //  model.currentName.observe(this, nameObserver)
-      //  val factory = Spares_Viewmodel_Factory(Spares_Repository(dao))
 
 
         var message="Are you sure you want to clear cart. All items will be removed"
@@ -153,10 +150,16 @@ repository.cart_items_from_roomdb()
                         DialogInterface.OnClickListener { dialog, id ->
                             // super.onBackPressed()
                             delete_function.delete_all_order_items(context)
-items_in_cart_arraylist.clear()
+                            items_in_cart_arraylist.clear()
                             adap.notifyDataSetChanged()
                         //    update_no_in_cart_for_spares_search_dashboard.check_number_of_items_in_cart()
                             grand_total.text=""
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                delay(10000)
+                            }
+                            var intent= Intent(this,Spares_Search_Dashboard::class.java)
+                            startActivity(intent)
 
 
 

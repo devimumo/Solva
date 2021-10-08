@@ -4,11 +4,13 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import androidx.core.content.ContextCompat.startActivity
 import com.example.solva.MainActivity
 import com.example.solva.Room_Database.Entities.Items_added_to_cart_entity
 import com.example.solva.Room_Database.db_instance.Items_added_to_cart_db_instance
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.example.solva.SpareParts.Spares_Search_Dashboard
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,7 +36,7 @@ class Check_items_in_cart {
 
 
 
-                    set_no_of_items_to_one_in_add_cart.set_number_of_items_text_to_one()
+                  //  set_no_of_items_to_one_in_add_cart.set_number_of_items_text_to_one()
                  //   set_no_of_items_to_one_in_add_cart.check_number_of_items_in_cart_for_add_to_cart_activity()
 
                     add_to_cart_function(context, data_from_dashboard)
@@ -46,8 +48,15 @@ class Check_items_in_cart {
                 withContext(Dispatchers.Main) {
 
 
+                    var see_item_intent=Intent(context, Add_To_cart::class.java)
 
-                    add_to_cart_instanse.items_is_already_in_cart(context)
+                    var item_data_to_json_string= change_object_to_json_string(data_from_dashboard)
+                    see_item_intent.putExtra("item_data_to_json_string",item_data_to_json_string)
+                    see_item_intent.putExtra("quantity",items[0].quantity.toString())
+
+                    context.startActivity(see_item_intent)
+
+                   // add_to_cart_instanse.items_is_already_in_cart(context)
                 }
 
             }
@@ -64,9 +73,14 @@ class Check_items_in_cart {
     }
 
 
+    private fun change_object_to_json_string(data: Spare_parts_search_data_class): String
+    {
+        val item_data_to_json_string: String = Gson().toJson(data)
 
+        return  item_data_to_json_string
+    }
 
-    fun add_to_cart_function(context: Context, dataFromDashboard: Spare_parts_search_data_class?) {
+    suspend fun add_to_cart_function(context: Context, dataFromDashboard: Spare_parts_search_data_class?) {
 
 
         var items_to_cart_entity= Items_added_to_cart_entity()
@@ -89,8 +103,8 @@ class Check_items_in_cart {
 
 
 
-        add_to_cart_instanse.set_number_of_items_text_to_one()
-        add_to_cart_instanse.check_number_of_items_in_cart_for_add_to_cart_activity()
+//        add_to_cart_instanse.set_number_of_items_text_to_one()
+     //   add_to_cart_instanse.check_number_of_items_in_cart_for_add_to_cart_activity()
 
     //    update_no_in_cart.check_number_of_items_in_cart()
 

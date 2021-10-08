@@ -8,10 +8,13 @@ class Spares_Viewmodel_Factory(
     private val repository: Spares_Repository
 ): ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(Spares_Search_View_Model::class.java)){
+
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(Spares_Search_View_Model::class.java)) {
             return Spares_Search_View_Model(repository) as T
         }
-        throw IllegalArgumentException("Unknown View Model class")    }
+        throw IllegalArgumentException("Unknown View Model class")
+        }
 
-}
+    }

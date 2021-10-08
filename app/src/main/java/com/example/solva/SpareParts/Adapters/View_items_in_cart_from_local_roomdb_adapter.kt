@@ -24,6 +24,9 @@ import kotlinx.android.synthetic.main.item_layout.view.item_description
 import kotlinx.android.synthetic.main.items_in_cart_recycler_layout.view.*
 import kotlinx.android.synthetic.main.items_in_cart_recycler_layout.view.add_items_to_cart_sign
 import kotlinx.android.synthetic.main.items_in_cart_recycler_layout.view.items_in_cart_quantity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.InputStream
 import java.net.URL
 import java.util.*
@@ -104,7 +107,11 @@ class View_items_in_cart_from_local_roomdb_adapter(
 
 
             var updated_quantity=holder.itemview.items_in_cart_quantity.text.toString()
-            update_no_of_items_in_cart(c,updated_quantity,items_data.item_id,holder.itemView.items_in_cart_quantity,holder.itemview.add_items_to_cart_sign)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                update_no_of_items_in_cart(c,updated_quantity,items_data.item_id,holder.itemView.items_in_cart_quantity,holder.itemview.add_items_to_cart_sign)
+
+            }
           //  quantity=(quantity.toInt()+1).toString()
 
 
@@ -177,7 +184,7 @@ private fun LoadImageFromWebOperations_function(url: String?): Drawable? {
     }
 }
 
-private fun update_no_of_items_in_cart (context: Context, no_of_items: String, item_id: String, no_of_items_textview: TextView, addItemsToCartSign: ImageView)
+private suspend fun update_no_of_items_in_cart (context: Context, no_of_items: String, item_id: String, no_of_items_textview: TextView, addItemsToCartSign: ImageView)
 {
 
         var update_items= Items_added_to_cart_db_instance()
@@ -200,8 +207,10 @@ private fun reduce_no_of_items_in_cart (
 
 
     var quantity_to_set= no_of_items.toInt()-1
-
+CoroutineScope(Dispatchers.IO).launch {
     update_items.add_quantity_of_items_in_cart(context, item_id,quantity_to_set.toString())
+
+}
     no_of_items_textview.text=quantity_to_set.toString()
     /*CoroutineScope(Dispatchers.IO).launch {
         var get_items = Items_added_to_cart_db_instance()

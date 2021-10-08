@@ -14,27 +14,30 @@ private var add_to_cart_instanse= Add_To_cart()
 
 class Items_added_to_cart_db_instance {
 
-    fun insert_item_payload(context: Context, items_payload: Items_added_to_cart_entity)
+  suspend  fun insert_item_payload(context: Context, items_payload: Items_added_to_cart_entity)
     {
 
 
-        CoroutineScope(Dispatchers.IO).launch {
 
             val db = Room.databaseBuilder(context,
                     Items_added_to_cart_DB::class.java, "solva"
             ).build()
 
-            db.Items_added_to_cart_DAO().insertAll(items_payload)
 
 
+        CoroutineScope(Dispatchers.IO).launch {
 
-            withContext(Dispatchers.Main) {
 
-                add_to_cart_instanse.change_visibility_of_items()
+            var response = db.Items_added_to_cart_DAO().insertAll(items_payload)
+            withContext(Dispatchers.Main){
+var ress=response
+
             }
         }
 
-    }
+        }
+
+
 
     fun delete_specific_order_item(context: Context, unique_id: String)
     {
@@ -67,18 +70,17 @@ class Items_added_to_cart_db_instance {
     }
 
 
-    fun add_quantity_of_items_in_cart(context: Context, unique_id: String, quantity_to_set: String)
+   suspend fun add_quantity_of_items_in_cart(context: Context, unique_id: String, quantity_to_set: String): Int
     {
 
-        CoroutineScope(Dispatchers.IO).launch {
 
             val db = Room.databaseBuilder(context, Items_added_to_cart_DB::class.java, "solva").build()
 
-           db.Items_added_to_cart_DAO().update_no_of_items_to_speicifc_cart_item(quantity_to_set, unique_id)
-
-        }
+          var value= db.Items_added_to_cart_DAO().update_no_of_items_to_speicifc_cart_item(quantity_to_set, unique_id)
 
 
+
+return   value
     }
 
    fun check_number_of_items_in_cart(context: Context): List<Items_added_to_cart_entity>

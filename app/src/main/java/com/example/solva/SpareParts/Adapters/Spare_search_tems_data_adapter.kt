@@ -10,23 +10,34 @@ import android.icu.number.NumberRangeFormatter.with
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.solva.R
 import com.example.solva.SpareParts.Add_to_cart.Add_To_cart
+import com.example.solva.SpareParts.Add_to_cart.Check_items_in_cart
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_layout.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.net.URL
 import java.util.*
+
+
 
 
 class Spare_search_tems_data_adapter(
     var spares_search_result: ArrayList<Spare_parts_search_data_class>,
     val c: Context
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+    private  var check_items_in_cart=Check_items_in_cart()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view= LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
 
@@ -66,14 +77,25 @@ class Spare_search_tems_data_adapter(
 
 holder.itemview.add_to_cart.setOnClickListener { view->
 
-    val activity = view.getContext() as Activity
 
-    var intent=Intent(view.context, Add_To_cart::class.java)
+    CoroutineScope(Dispatchers.IO).launch {
+
+        val activity = view.getContext() as Activity
+
+        var intent = Intent(view.context, Add_To_cart::class.java)
+
+       var response= check_items_in_cart.check_if_item_in_cart_when_adding_to_cart(
+            c,
+            items_data.item_id,
+            items_data
+        )
 
 
-    var item_data_to_json_string= change_object_to_json_string(items_data)
-    intent.putExtra("item_data_to_json_string",item_data_to_json_string)
-    activity.startActivity(intent)
+
+        var item_data_to_json_string = change_object_to_json_string(items_data)
+        //  intent.putExtra("item_data_to_json_string",item_data_to_json_string)
+        //  activity.startActivity(intent)
+    }
 }
 
     }

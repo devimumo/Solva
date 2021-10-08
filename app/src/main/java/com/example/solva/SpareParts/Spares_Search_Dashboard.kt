@@ -1,6 +1,5 @@
 package com.example.solva.SpareParts
 
-import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
@@ -9,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,14 +20,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.solva.Helper_classes.Volley_ErrorListener_Handler
 import com.example.solva.R
-import com.example.solva.Room_Database.App_database.Items_added_to_cart_DB
 import com.example.solva.SpareParts.Adapters.Spare_search_tems_data_adapter
 import com.example.solva.SpareParts.DataClasses.Spare_parts_search_data_class
 import com.example.solva.SpareParts.View_Items_In_Cart.Items_in_cart
-import com.example.solva.View_model_items.Spares_Repository
-import com.example.solva.View_model_items.Spares_Viewmodel_Factory
+import com.example.solva.View_model_items.View_Model_access_class
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_add__to_cart.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.*
 import kotlinx.android.synthetic.main.activity_spares__search__dashboard.view.*
 
@@ -37,7 +34,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
-import androidx.lifecycle.ViewModelProvider as ViewModelProvider1
 
 private var rootView: View? = null
 private val spares_arraylist = ArrayList<Spare_parts_search_data_class>()
@@ -61,35 +57,19 @@ private var search_mode="";
 
 
 
-class Spares_Search_Dashboard : Activity(), AdapterView.OnItemSelectedListener {
+class Spares_Search_Dashboard  : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
-//    val badgeDrawable = rootView!!.bottom_navigation.getBadge(R.id.item_count_menu_item)
+      var view_model_access_class=View_Model_access_class()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_spares__search__dashboard)
-
-
-//        val dao = Items_added_to_cart_DB.getInstance(application)?.Items_added_to_cart_DAO()
-//val repository=Spares_Repository(dao!!)
-//val factory=Spares_Viewmodel_Factory(repository)
-      //  viewModel = ViewModelProvider(this,factory).get(Spares_Search_View_Model::class.java)
-
-       // viewModel=ViewModelProvider(ViewModelStore(),factory!!).get(Spares_Search_View_Model::class.java)
-
-
-
-     //   var viewmodels: Spares_Search_View_Model= androidx.lifecycle.ViewModelProvider(this,factory).get
-
-
-
-
-
-
-
         rootView = window.decorView.rootView
+        var badgeDrawable = rootView!!.bottom_navigation.getBadge(R.id.item_count_menu_item)
+
+view_model_access_class.access_items_in_cart(this,applicationContext,this, rootView!!)
+
 
         recycler_view= recycler_view
 
@@ -198,7 +178,11 @@ shop_now.setOnClickListener {
         // Create an ArrayAdapter using a simple spinner layout and languages array
 
     }
+//View model access items in cart
+    private fun access_items_in_cart()
+{
 
+    }
 
  /*   fun check_number_of_items_in_cart()
     {
@@ -543,6 +527,8 @@ shop_now.setOnClickListener {
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
     }
+
+
 
 
 }
